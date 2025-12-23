@@ -1,0 +1,73 @@
+### Authenticate
+# @name authenticate
+POST https://tv.odido.nl/VSP/V3/Authenticate
+content-type: application/json
+
+{
+    "authenticateBasic": {
+        "userID": {{$dotenv UserId}},
+        "clientPasswd": {{$dotenv ClientPassword}}
+    },
+    "authenticateDevice": {
+        "physicalDeviceID": "\"{{$dotenv DeviceId}}\"",
+        "terminalID": "\"{{$dotenv DeviceId}}\"",
+        "deviceModel": "{{$dotenv DeviceModel}}"
+    }
+}
+
+### Search for content
+# @name content
+@csrfToken = {{authenticate.response.body.$.csrfToken}}
+
+POST https://tv.odido.nl/VSP/V3/SearchContent
+X_CSRFToken: {{csrfToken}}
+
+{
+    "searchKey": "miraculous",
+    "contentTypes": [
+        "PROGRAM"
+    ],
+    "searchScopes": [
+        "ALL"
+    ],
+    "count": "31",
+    "offset": "0",
+    "sortType": [
+        "START_TIME:ASC",
+        // RELEVANCE,
+        // UPDATE_TIME:DESC,
+        // START_TIME:ASC,
+        // START_TIME:DESC
+    ]
+}
+
+### Get content details
+# @name detail
+@csrfToken = {{authenticate.response.body.$.csrfToken}}
+
+POST https://tv.odido.nl/VSP/V3/QueryPlaybill
+    ?SID=playbilldetail1^
+    &DEVICE=PC^
+    &DID=%22{{$dotenv DeviceId}}%22^
+X_CSRFToken: {{csrfToken}}
+
+{
+    "playbillID": "1621137693"
+}
+
+### Play content
+# @name play
+@csrfToken = {{authenticate.response.body.$.csrfToken}}
+@channelId = {{detail.response.body.playbillDetail.channelDetail.ID}}
+@playbillId = {{detail.response.body.playbillDetail.ID}}
+
+POST https://tv.odido.nl/VSP/V3/PlayChannel
+X_CSRFToken: {{csrfToken}}
+
+{
+    "channelID": {{channelId}},
+    "mediaID": "141430971",
+    "playbillID": {{playbillId}},
+    "businessType": "CUTV",
+    "isHTTPS": "1"
+}
