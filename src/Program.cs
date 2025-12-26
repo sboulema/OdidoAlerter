@@ -24,6 +24,8 @@ builder.Services
 
 var app = builder.Build();
 
+app.UseStaticFiles();
+
 app.MapGet("/feed.rss", async () =>
 {
 	var searchTerm = app.Configuration["SearchTerm"];

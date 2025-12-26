@@ -38,3 +38,6 @@ services:
 
 ## ⬇️ Dependencies
 - .NET 10.0
+
+## ⚖️ Disclaimer
+This application is not produced, endorsed, supported, or affiliated with [Odido](https://www.odido.nl/).
