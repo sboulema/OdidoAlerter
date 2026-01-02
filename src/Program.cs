@@ -12,15 +12,14 @@ builder.Services
     .AddSingleton<IOdidoService, OdidoService>();
 
 var cookieContainer = new CookieContainer();
-var httpClientHandler = new HttpClientHandler() { CookieContainer = cookieContainer };
 
 builder.Services
-    .AddHttpClient("Odido", httpClient =>
-    {
+	.AddHttpClient("Odido", httpClient =>
+	{
 		httpClient.BaseAddress = new Uri("https://tv.odido.nl");
-    })
-    .ConfigurePrimaryHttpMessageHandler(() => httpClientHandler)
-    .RemoveAllLoggers();
+	})
+	.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler() { CookieContainer = cookieContainer })
+	.RemoveAllLoggers();
 
 var app = builder.Build();
 
